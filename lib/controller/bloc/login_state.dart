@@ -1,31 +1,26 @@
 part of 'login_bloc.dart';
 
-class LoginState extends Equatable {
-  final String username;
-  bool get isValidUsername => username.length > 3;
-  final String password;
-  bool get isValidPassword => password.length > 6;
+abstract class SignInState {}
 
-  final FormSubmissionStatus formStatus;
-  const LoginState({
-    this.username = '',
-    this.password = '',
-    this.formStatus = const InitialFormStatus(),
-  });
+class SignInInitialState extends SignInState {}
 
-  LoginState copyWith({
-    String? username,
-    String? password,
-    FormSubmissionStatus? formStatus,
-  }) {
-    return LoginState(
-        username: this.username,
-        password: this.password,
-        formStatus: this.formStatus);
-  }
+class SignInValidUsernameState extends SignInState {}
 
-  @override
-  List<Object> get props => [];
+class SignInValidPasswordState extends SignInState {}
+
+class SignInInvalidUsernameState extends SignInState {}
+
+class SignInInvalidPasswordState extends SignInState {}
+
+class SignInValidCredentialState extends SignInState {}
+
+class SignInErrorState extends SignInState {
+  final String errorMessage;
+  SignInErrorState(this.errorMessage);
 }
 
-class LoginInitial extends LoginState {}
+class SignInSuccess extends SignInState {}
+
+class SignInFaliure extends SignInState {}
+
+class SignInLoadingState extends SignInState {}

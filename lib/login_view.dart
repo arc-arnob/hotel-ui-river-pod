@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotet_ui_river_pod/auth_repository.dart';
-import 'package:hotet_ui_river_pod/form_submission_status.dart';
 
 import 'controller/bloc/login_bloc.dart';
 
@@ -9,7 +8,8 @@ class LoginView extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
 
   LoginView({super.key});
-
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,14 +43,13 @@ class LoginView extends StatelessWidget {
   }
 
   Widget _passwordField() {
-    return BlocBuilder<LoginBloc, LoginState>(
+    return BlocBuilder<LoginBloc, SignInState>(
       builder: (context, state) {
         return TextFormField(
+          controller: passwordController,
           obscureText: true,
           decoration: const InputDecoration(
               icon: Icon(Icons.security), hintText: 'Password'),
-          validator: (value) =>
-              state.isValidPassword ? null : 'Password too short',
           onChanged: (value) => dispatchPasswordChange(value, context),
         );
       },
@@ -58,13 +57,12 @@ class LoginView extends StatelessWidget {
   }
 
   Widget _usernameField() {
-    return BlocBuilder<LoginBloc, LoginState>(
+    return BlocBuilder<LoginBloc, SignInState>(
       builder: (context, state) {
         return TextFormField(
+          controller: usernameController,
           decoration: const InputDecoration(
               icon: Icon(Icons.person), hintText: 'Username'),
-          validator: (value) =>
-              state.isValidUsername ? null : 'Username too short',
           onChanged: (value) => dispatchUsernameChange(value, context),
         );
       },
@@ -72,15 +70,13 @@ class LoginView extends StatelessWidget {
   }
 
   Widget _loginButton() {
-    return BlocBuilder<LoginBloc, LoginState>(
+    return BlocBuilder<LoginBloc, SignInState>(
       builder: (context, state) {
-        return state.formStatus is FormSubmitting
+        return state is SignInLoadingState
             ? const CircularProgressIndicator()
             : ElevatedButton(
                 onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    dispatchLogin(context);
-                  }
+                  dispatchLogin(context);
                 },
                 child: const Text('Login'),
               );
@@ -97,6 +93,7 @@ class LoginView extends StatelessWidget {
   }
 
   void dispatchLogin(context) {
-    BlocProvider.of<LoginBloc>(context).add(LoginSubmitted());
+    BlocProvider.of<LoginBloc>(context)
+        .add(LoginSubmitted(usernameController.text, passwordController.text));
   }
 }
