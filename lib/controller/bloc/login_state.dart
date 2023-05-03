@@ -4,7 +4,7 @@ class LoginState extends Equatable {
   final String username;
   bool get isValidUsername => username.length > 3;
   final String password;
-  bool get validPassword => password.length > 6;
+  bool get isValidPassword => password.length > 6;
 
   final FormSubmissionStatus formStatus;
   const LoginState({
